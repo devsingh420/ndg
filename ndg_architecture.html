@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NESCAFÉ Dolce Gusto — Platform Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #fafaf8;
+    --warm-white: #f5f3ef;
+    --stone: #e8e5df;
+    --stone-mid: #c8c4bc;
+    --stone-dark: #7a7670;
+    --ink: #1a1916;
+    --ink-mid: #3d3b37;
+    --ndg-red: #c8102e;
+    --ndg-red-light: #f0e4e7;
+    --ndg-red-pale: #faf0f2;
+    --accent-blue: #1a3a5c;
+    --accent-teal: #0d5944;
+    --accent-amber: #7a4f00;
+    --accent-purple: #3a2f7a;
+    --accent-coral: #8a2a10;
+    --accent-pink: #6a1f3a;
+    --accent-gray: #3a3834;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--warm-white);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HERO ─────────────────────────────────────── */
+  .hero {
+    background: var(--black);
+    color: var(--white);
+    padding: 80px 60px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 80% 50%, rgba(200,16,46,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 15% 80%, rgba(200,16,46,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ndg-red);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--ndg-red);
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(38px, 5vw, 58px);
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    max-width: 600px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .hero-meta {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .hero-stat-num {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1;
+    color: var(--white);
+  }
+
+  .hero-stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .hero-badge {
+    margin-left: auto;
+    background: rgba(200,16,46,0.15);
+    border: 1px solid rgba(200,16,46,0.3);
+    color: #f4a0b0;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+
+  /* ── NAV ──────────────────────────────────────── */
+  .nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--stone);
+    padding: 0 60px;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-item {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--stone-dark);
+    text-decoration: none;
+    padding: 14px 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    font-family: var(--sans);
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--ndg-red);
+    border-bottom-color: var(--ndg-red);
+  }
+
+  /* ── LAYOUT ───────────────────────────────────── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 60px;
+  }
+
+  .section {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--stone);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .section-num {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--stone-mid);
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--stone-dark);
+    max-width: 360px;
+    line-height: 1.7;
+    margin-top: 10px;
+  }
+
+  /* ── CARDS ────────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--stone);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--stone-mid);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+
+  .card:hover::before, .card.open::before {
+    background: var(--card-accent, var(--ndg-red));
+  }
+
+  .card.open {
+    border-color: var(--stone-mid);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 12px;
+    background: var(--card-icon-bg, var(--ndg-red-pale));
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    color: var(--stone-dark);
+    line-height: 1.4;
+  }
+
+  .card-arrow {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-size: 14px;
+    color: var(--stone-mid);
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .card.open .card-arrow { transform: rotate(45deg); color: var(--ink-mid); }
+
+  /* ── DETAIL PANEL ─────────────────────────────── */
+  .detail-wrap {
+    display: none;
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+
+  .detail-wrap.open { display: block; }
+
+  .detail-panel {
+    background: var(--white);
+    border: 1px solid var(--stone);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    position: relative;
+    animation: slideIn 0.2s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    font-size: 11px;
+    color: var(--stone-dark);
+    cursor: pointer;
+    border: 1px solid var(--stone);
+    background: var(--warm-white);
+    border-radius: 100px;
+    padding: 4px 10px;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .detail-close:hover { background: var(--stone); }
+
+  .detail-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: var(--warm-white);
+    color: var(--ink-mid);
+    border: 1px solid var(--stone);
+    letter-spacing: 0.01em;
+  }
+
+  .detail-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 32px;
+  }
+
+  .detail-list li {
+    font-size: 13px;
+    color: var(--ink-mid);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--warm-white);
+  }
+
+  .detail-list li::before {
+    content: '→';
+    color: var(--stone-mid);
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 11px;
+  }
+
+  /* ── FLOW DIAGRAM ─────────────────────────────── */
+  .flow-wrap {
+    background: var(--white);
+    border: 1px solid var(--stone);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    overflow-x: auto;
+  }
+
+  .flow-svg { display: block; width: 100%; min-width: 700px; }
+
+  /* ── INTEGRATION TABLE ────────────────────────── */
+  .int-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .int-card {
+    background: var(--white);
+    border: 1px solid var(--stone);
+    border-radius: var(--radius);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .int-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--int-color, var(--ndg-red));
+    opacity: 0.5;
+  }
+
+  .int-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  .int-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--stone-dark);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .int-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .int-items li {
+    font-size: 12px;
+    color: var(--ink-mid);
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  .int-items li::before {
+    content: '·';
+    color: var(--stone-mid);
+    font-size: 16px;
+    line-height: 1.1;
+    flex-shrink: 0;
+  }
+
+  /* ── COMPLIANCE STRIP ─────────────────────────── */
+  .compliance-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .comp-item {
+    background: var(--white);
+    border: 1px solid var(--stone);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .comp-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .comp-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .comp-desc {
+    font-size: 11px;
+    color: var(--stone-dark);
+    line-height: 1.5;
+  }
+
+  /* ── PHASE PILLS ──────────────────────────────── */
+  .phase-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .phase-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 1px solid var(--stone);
+    border-radius: 100px;
+    padding: 6px 14px 6px 8px;
+    font-size: 12px;
+    color: var(--ink-mid);
+  }
+
+  .phase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ───────────────────────────────────── */
+  .footer {
+    background: var(--black);
+    color: rgba(255,255,255,0.35);
+    padding: 32px 60px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer strong { color: rgba(255,255,255,0.6); font-weight: 500; }
+
+
+  /* ── TIMELINE ─────────────────────────────────── */
+  .timeline { position: relative; }
+  .timeline-track { position: absolute; left: 112px; top: 0; bottom: 0; width: 1px; background: var(--stone); }
+  .tl-item { display: grid; grid-template-columns: 112px 1fr; gap: 0 28px; margin-bottom: 8px; position: relative; align-items: center; }
+  .tl-date { text-align: right; padding: 20px 0; padding-right: 28px; }
+  .tl-date-main { font-family: var(--serif); font-size: 15px; color: var(--ink); line-height: 1.2; }
+  .tl-date-sub { font-size: 11px; color: var(--stone-dark); margin-top: 2px; }
+  .tl-dot { position: absolute; left: 112px; top: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; border-radius: 50%; background: var(--white); border: 2px solid var(--stone-mid); z-index: 1; }
+  .tl-item.critical .tl-dot { background: var(--ndg-red); border-color: var(--ndg-red); width: 12px; height: 12px; }
+  .tl-item.milestone .tl-dot { background: var(--ink); border-color: var(--ink); }
+  .tl-card { background: var(--white); border: 1px solid var(--stone); border-radius: var(--radius); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .tl-card:hover { border-color: var(--stone-mid); box-shadow: 0 2px 16px rgba(0,0,0,0.05); }
+  .tl-item.critical .tl-card { border-color: rgba(200,16,46,0.2); background: var(--ndg-red-pale); }
+  .tl-item.milestone .tl-card { border-color: var(--stone-mid); background: var(--warm-white); }
+  .tl-card-left { flex: 1; min-width: 0; }
+  .tl-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 3px; line-height: 1.3; }
+  .tl-note { font-size: 12px; color: var(--stone-dark); line-height: 1.5; }
+  .tl-badges { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .tl-cat { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; border: 1px solid var(--stone); background: var(--warm-white); color: var(--stone-dark); }
+  .tl-badge-critical { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; background: var(--ndg-red); color: #fff; }
+  .tl-badge-action { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; background: var(--ink); color: #fff; }
+  .tl-badge-milestone { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; background: var(--stone); color: var(--ink-mid); }
+
+  /* ── UTILITY ──────────────────────────────────── */
+  .color-blue   { --card-accent: #1a3a5c; --card-icon-bg: #e8f0f8; }
+  .color-teal   { --card-accent: #0d5944; --card-icon-bg: #e0f2ea; }
+  .color-purple { --card-accent: #3a2f7a; --card-icon-bg: #edeafc; }
+  .color-amber  { --card-accent: #7a4f00; --card-icon-bg: #fdf0d8; }
+  .color-coral  { --card-accent: #8a2a10; --card-icon-bg: #faeae5; }
+  .color-pink   { --card-accent: #6a1f3a; --card-icon-bg: #fae8f0; }
+  .color-gray   { --card-accent: #3a3834; --card-icon-bg: #f0eeea; }
+
+  .mt-4 { margin-top: 4px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-32 { margin-top: 32px; }
+
+  @media (max-width: 900px) {
+    .hero { padding: 48px 24px; }
+    .container { padding: 0 24px; }
+    .nav { padding: 0 24px; }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .detail-list { grid-template-columns: 1fr; }
+    .int-grid { grid-template-columns: 1fr; }
+    .compliance-row { grid-template-columns: repeat(2, 1fr); }
+    .hero-badge { display: none; }
+    .footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Platform architecture document</div>
+  <h1 class="hero-title">NESCAFÉ® Dolce Gusto<br><em>Thailand — Shopify Plus</em></h1>
+
+  <div class="hero-meta">
+    <div class="hero-stat">
+      <span class="hero-stat-num">10</span>
+      <span class="hero-stat-label">System layers</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">3</span>
+      <span class="hero-stat-label">Core integrations</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">M1→</span>
+      <span class="hero-stat-label">Platform migration</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">TH + EN</span>
+      <span class="hero-stat-label">Localisation</span>
+    </div>
+    <div class="hero-badge">Confidential — for internal alignment</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-item" onclick="scrollToSection('storefront')">Storefront</button>
+  <button class="nav-item" onclick="scrollToSection('commerce')">Commerce</button>
+  <button class="nav-item" onclick="scrollToSection('identity')">Identity & CRM</button>
+  <button class="nav-item" onclick="scrollToSection('payments')">Payments</button>
+  <button class="nav-item" onclick="scrollToSection('fulfillment')">Fulfillment</button>
+  <button class="nav-item" onclick="scrollToSection('marketing')">Marketing & SEO</button>
+  <button class="nav-item" onclick="scrollToSection('compliance')">Compliance</button>
+  <button class="nav-item" onclick="scrollToSection('integrations')">Integrations</button>
+  <button class="nav-item" onclick="scrollToSection('dataflow')">Data flow</button>
+  <button class="nav-item" onclick="scrollToSection('timeline')">Timeline</button>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div style="background: var(--warm-white);">
+
+  <!-- 1. STOREFRONT -->
+  <section id="storefront" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">01</div>
+          <h2 class="section-title">Storefront &amp; UX</h2>
+          <p class="section-desc">Mobile-first Shopify Plus storefront in Thai and English. Target page load under 3 seconds on mobile.</p>
+        </div>
+      </div>
+      <div class="card-grid grid-3" id="sf-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. COMMERCE ENGINE -->
+  <section id="commerce" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">02</div>
+          <h2 class="section-title">Commerce Engine</h2>
+          <p class="section-desc">Subscription commerce as the strategic core, built on Shopify Plus. Migrated from Magento 1.</p>
+        </div>
+      </div>
+      <div class="card-grid grid-4" id="ce-grid"></div>
+    </div>
+  </section>
+
+  <!-- 3. IDENTITY -->
+  <section id="identity" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">03</div>
+          <h2 class="section-title">Identity &amp; CRM</h2>
+          <p class="section-desc">EGG CRM integration for authentication, loyalty, and coupon management. LINE and OTP login.</p>
+        </div>
+      </div>
+      <div class="card-grid grid-3" id="id-grid"></div>
+    </div>
+  </section>
+
+  <!-- 4. PAYMENTS -->
+  <section id="payments" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">04</div>
+          <h2 class="section-title">Payments</h2>
+          <p class="section-desc">Omise gateway handling one-time, installment, and recurring subscription billing. PCI DSS compliant.</p>
+        </div>
+      </div>
+      <div class="card-grid grid-3" id="pay-grid"></div>
+    </div>
+  </section>
+
+  <!-- 5. FULFILLMENT -->
+  <section id="fulfillment" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">05</div>
+          <h2 class="section-title">Fulfillment &amp; Operations</h2>
+          <p class="section-desc">Flash plugin (Intrepid) for order routing, inventory sync, and real-time tracking. LON for customer notifications.</p>
+        </div>
+      </div>
+      <div class="card-grid grid-3" id="ful-grid"></div>
+    </div>
+  </section>
+
+  <!-- 6. MARKETING -->
+  <section id="marketing" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">06</div>
+          <h2 class="section-title">Marketing, SEO &amp; Analytics</h2>
+          <p class="section-desc">Full tracking suite with GA4, GTM, Meta and TikTok Pixel. SEO-preserving migration from Magento 1 with 301 redirects.</p>
+        </div>
+      </div>
+      <div class="card-grid grid-3" id="mkt-grid"></div>
+    </div>
+  </section>
+
+  <!-- 7. COMPLIANCE -->
+  <section id="compliance" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">07</div>
+          <h2 class="section-title">Compliance &amp; Infrastructure</h2>
+          <p class="section-desc">PDPA, PCI DSS, RBAC, and data migration. No passwords migrate — all legacy users re-authenticate.</p>
+        </div>
+      </div>
+      <div class="compliance-row">
+        <div class="comp-item">
+          <div class="comp-icon">🔒</div>
+          <div class="comp-name">PDPA</div>
+          <div class="comp-desc">Cookie consent, marketing consent, age gating, deletion rights</div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-icon">💳</div>
+          <div class="comp-name">PCI DSS</div>
+          <div class="comp-desc">No raw card data in Shopify. Tokenised via Omise. Subscription tokens secured.</div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-icon">🛡️</div>
+          <div class="comp-name">RBAC</div>
+          <div class="comp-desc">Marketing vs Customer Service role separation. Shopify Plus admin roles.</div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-icon">📦</div>
+          <div class="comp-name">Data migration</div>
+          <div class="comp-desc">Products, customers, orders, subscriptions from Magento 1. No passwords transferred.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. INTEGRATIONS -->
+  <section id="integrations" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">08</div>
+          <h2 class="section-title">Third-Party Integrations</h2>
+          <p class="section-desc">Three core integration pillars. Each is bidirectional — data flows in both directions in real time.</p>
+        </div>
+      </div>
+      <div class="int-grid">
+        <div class="int-card" style="--int-color: #3a2f7a;">
+          <div class="int-name">EGG CRM</div>
+          <div class="int-type">Loyalty · Identity · Coupons</div>
+          <ul class="int-items">
+            <li>LINE login with CRM verification</li>
+            <li>OTP phone number authentication</li>
+            <li>Real-time loyalty point balance + tier</li>
+            <li>Earn points on every purchase</li>
+            <li>Burn points as discount at checkout (Ph. 2)</li>
+            <li>Single-use and multi-use coupon sync</li>
+            <li>Auto-apply best-benefit coupon in cart</li>
+            <li>Account CRM widget — point history</li>
+          </ul>
+        </div>
+        <div class="int-card" style="--int-color: #7a4f00;">
+          <div class="int-name">Omise</div>
+          <div class="int-type">Payment gateway · PCI DSS</div>
+          <ul class="int-items">
+            <li>Credit card processing</li>
+            <li>Bank transfer</li>
+            <li>QR PromptPay (Thai market)</li>
+            <li>Local bank installment plans</li>
+            <li>PCI DSS tokenisation for subscriptions</li>
+            <li>Automated recurring billing</li>
+            <li>Retry logic for failed payments</li>
+            <li>Customer notification on failed billing</li>
+          </ul>
+        </div>
+        <div class="int-card" style="--int-color: #8a2a10;">
+          <div class="int-name">Flash / Intrepid</div>
+          <div class="int-type">Fulfillment · Inventory · Notifications</div>
+          <ul class="int-items">
+            <li>Automated order submission</li>
+            <li>Real-time order status updates</li>
+            <li>Shipment tracking pushed to Shopify</li>
+            <li>Inventory sync — prevent overselling</li>
+            <li>Push notifications via LINE (LON)</li>
+            <li>Post-checkout customer notifications</li>
+            <li>Delivery status to customer account</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. DATA FLOW -->
+  <section id="dataflow" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">09</div>
+          <h2 class="section-title">Data Flow</h2>
+          <p class="section-desc">How data moves across the full system — from customer browser through commerce engine to integrations and compliance.</p>
+        </div>
+      </div>
+      <div class="flow-wrap">
+        <svg class="flow-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+
+          <!-- Row 1: Customer -->
+          <rect x="330" y="20" width="240" height="52" rx="10" fill="#0a0a0a"/>
+          <text font-family="DM Serif Display, serif" font-size="14" fill="#fafaf8" x="450" y="41" text-anchor="middle" dominant-baseline="central">Customer</text>
+          <text font-family="DM Sans, sans-serif" font-size="11" fill="rgba(255,255,255,0.45)" x="450" y="58" text-anchor="middle" dominant-baseline="central">Browser · Mobile · TH + EN</text>
+
+          <!-- Arrow down to Shopify -->
+          <line x1="450" y1="72" x2="450" y2="112" stroke="#c8c4bc" stroke-width="1.5" marker-end="url(#arr)"/>
+
+          <!-- Row 2: Shopify Plus -->
+          <rect x="60" y="112" width="780" height="56" rx="10" fill="#e8e5df" stroke="#c8c4bc" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="15" fill="#1a1916" x="450" y="134" text-anchor="middle" dominant-baseline="central">Shopify Plus — Commerce Engine</text>
+          <text font-family="DM Sans, sans-serif" font-size="11" fill="#7a7670" x="450" y="152" text-anchor="middle" dominant-baseline="central">PLP · PDP · Cart · Checkout · Subscription portal · Account · CMS</text>
+
+          <!-- 3 arrows down from Shopify -->
+          <line x1="190" y1="168" x2="140" y2="220" stroke="#c8c4bc" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="450" y1="168" x2="450" y2="220" stroke="#c8c4bc" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="710" y1="168" x2="760" y2="220" stroke="#c8c4bc" stroke-width="1.5" marker-end="url(#arr)"/>
+
+          <!-- Return dashed arrows up -->
+          <line x1="130" y1="220" x2="180" y2="168" stroke="#3a2f7a" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+          <line x1="460" y1="220" x2="460" y2="168" stroke="#7a4f00" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+          <line x1="770" y1="220" x2="720" y2="168" stroke="#8a2a10" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+
+          <!-- Row 3: Three integrations -->
+          <rect x="20" y="220" width="240" height="60" rx="10" fill="#edeafc" stroke="#c8baee" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="14" fill="#3a2f7a" x="140" y="243" text-anchor="middle" dominant-baseline="central">EGG CRM</text>
+          <text font-family="DM Sans, sans-serif" font-size="11" fill="#534ab7" x="140" y="261" text-anchor="middle" dominant-baseline="central">Auth · Points · Coupons · Tiers</text>
+
+          <rect x="330" y="220" width="240" height="60" rx="10" fill="#fdf0d8" stroke="#e8c87a" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="14" fill="#7a4f00" x="450" y="243" text-anchor="middle" dominant-baseline="central">Omise</text>
+          <text font-family="DM Sans, sans-serif" font-size="11" fill="#a06a00" x="450" y="261" text-anchor="middle" dominant-baseline="central">Card · PromptPay · Installments · Tokens</text>
+
+          <rect x="640" y="220" width="240" height="60" rx="10" fill="#faeae5" stroke="#e8b0a0" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="14" fill="#8a2a10" x="760" y="243" text-anchor="middle" dominant-baseline="central">Flash / Intrepid</text>
+          <text font-family="DM Sans, sans-serif" font-size="11" fill="#993c1d" x="760" y="261" text-anchor="middle" dominant-baseline="central">Orders · Inventory · Tracking</text>
+
+          <!-- Sub-nodes below EGG -->
+          <line x1="100" y1="280" x2="80" y2="330" stroke="#c8c4bc" stroke-width="1.2" marker-end="url(#arr)"/>
+          <line x1="180" y1="280" x2="200" y2="330" stroke="#c8c4bc" stroke-width="1.2" marker-end="url(#arr)"/>
+          <rect x="20" y="330" width="120" height="40" rx="8" fill="#f5f3ef" stroke="#d8d4cc" stroke-width="0.8"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#3a2f7a" x="80" y="346" text-anchor="middle" dominant-baseline="central">LINE auth</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="80" y="362" text-anchor="middle" dominant-baseline="central">Social login</text>
+          <rect x="160" y="330" width="120" height="40" rx="8" fill="#f5f3ef" stroke="#d8d4cc" stroke-width="0.8"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#3a2f7a" x="220" y="346" text-anchor="middle" dominant-baseline="central">OTP / Phone</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="220" y="362" text-anchor="middle" dominant-baseline="central">SMS verify</text>
+
+          <!-- Sub-nodes below Omise -->
+          <line x1="400" y1="280" x2="380" y2="330" stroke="#c8c4bc" stroke-width="1.2" marker-end="url(#arr)"/>
+          <line x1="500" y1="280" x2="520" y2="330" stroke="#c8c4bc" stroke-width="1.2" marker-end="url(#arr)"/>
+          <rect x="320" y="330" width="120" height="40" rx="8" fill="#f5f3ef" stroke="#d8d4cc" stroke-width="0.8"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#7a4f00" x="380" y="346" text-anchor="middle" dominant-baseline="central">Tokenisation</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="380" y="362" text-anchor="middle" dominant-baseline="central">PCI DSS</text>
+          <rect x="460" y="330" width="120" height="40" rx="8" fill="#f5f3ef" stroke="#d8d4cc" stroke-width="0.8"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#7a4f00" x="520" y="346" text-anchor="middle" dominant-baseline="central">Retry logic</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="520" y="362" text-anchor="middle" dominant-baseline="central">Failed billing</text>
+
+          <!-- Sub-nodes below Flash -->
+          <line x1="720" y1="280" x2="700" y2="330" stroke="#c8c4bc" stroke-width="1.2" marker-end="url(#arr)"/>
+          <line x1="800" y1="280" x2="820" y2="330" stroke="#c8c4bc" stroke-width="1.2" marker-end="url(#arr)"/>
+          <rect x="640" y="330" width="120" height="40" rx="8" fill="#f5f3ef" stroke="#d8d4cc" stroke-width="0.8"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#8a2a10" x="700" y="346" text-anchor="middle" dominant-baseline="central">Order status</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="700" y="362" text-anchor="middle" dominant-baseline="central">Pushed to Shopify</text>
+          <rect x="780" y="330" width="100" height="40" rx="8" fill="#f5f3ef" stroke="#d8d4cc" stroke-width="0.8"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#8a2a10" x="830" y="346" text-anchor="middle" dominant-baseline="central">LINE / LON</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="830" y="362" text-anchor="middle" dominant-baseline="central">Notify customer</text>
+
+          <!-- Arrow down to bottom row -->
+          <line x1="450" y1="370" x2="450" y2="415" stroke="#c8c4bc" stroke-width="1.5" marker-end="url(#arr)"/>
+
+          <!-- Row 4: Bottom layer -->
+          <rect x="20" y="415" width="220" height="52" rx="10" fill="#fae8f0" stroke="#e0b0c8" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="13" fill="#6a1f3a" x="130" y="436" text-anchor="middle" dominant-baseline="central">Analytics</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#8a4a60" x="130" y="453" text-anchor="middle" dominant-baseline="central">GA4 · GTM · Meta · TikTok Pixel</text>
+
+          <rect x="265" y="415" width="370" height="52" rx="10" fill="#f0eeea" stroke="#d8d4cc" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="13" fill="#3a3834" x="450" y="436" text-anchor="middle" dominant-baseline="central">Compliance</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="450" y="453" text-anchor="middle" dominant-baseline="central">PDPA · PCI DSS · RBAC · Access control</text>
+
+          <rect x="660" y="415" width="220" height="52" rx="10" fill="#fae8f0" stroke="#e0b0c8" stroke-width="1"/>
+          <text font-family="DM Serif Display, serif" font-size="13" fill="#6a1f3a" x="770" y="436" text-anchor="middle" dominant-baseline="central">SEO migration</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#8a4a60" x="770" y="453" text-anchor="middle" dominant-baseline="central">301 redirects · Metafields · URLs</text>
+
+          <line x1="200" y1="168" x2="130" y2="415" stroke="#6a1f3a" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+          <line x1="700" y1="168" x2="770" y2="415" stroke="#6a1f3a" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+          <!-- Migration banner -->
+          <rect x="20" y="492" width="860" height="44" rx="10" fill="#f5f3ef" stroke="#c8c4bc" stroke-width="1" stroke-dasharray="6,4"/>
+          <text font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#3a3834" x="450" y="508" text-anchor="middle" dominant-baseline="central">Data migration: Magento 1 → Shopify Plus</text>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="450" y="525" text-anchor="middle" dominant-baseline="central">Products · Customers · Order history · Subscription tokens (passwords excluded — full re-authentication required)</text>
+
+          <!-- Legend -->
+          <line x1="20" y1="548" x2="44" y2="548" stroke="#7a7670" stroke-width="1.5" marker-end="url(#arr)"/>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="50" y="552">Data push</text>
+          <line x1="140" y1="548" x2="164" y2="548" stroke="#3a2f7a" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+          <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="170" y="552">Response / callback</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- TIMELINE -->
+  <section id="timeline" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">10</div>
+          <h2 class="section-title">Timeline</h2>
+          <p class="section-desc">Key milestones, dependencies, and action items from now through go-live. Critical items require immediate attention.</p>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-track"></div>
+
+        <div class="tl-item critical">
+          <div class="tl-date"><div class="tl-date-main">Apr 7</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Finalize Site Structure</div>
+              <div class="tl-note">Architecture sign-off required today before downstream tasks can proceed</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Architecture</span>
+              <span class="tl-badge-action">Action Required Today</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-date"><div class="tl-date-main">Apr 8</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Sandbox Setup &amp; Omise Integration</div>
+              <div class="tl-note">Ensure Omise API keys are ready before session</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Backend / Payment</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-date"><div class="tl-date-main">Apr 10</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Flash Express Confirmation</div>
+              <div class="tl-note">Integration approval required to unblock fulfillment setup</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Logistics</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item critical">
+          <div class="tl-date"><div class="tl-date-main">Apr 11</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Delivery of SQL Snapshot</div>
+              <div class="tl-note">Critical dependency — migration strategy and Apr 28 session are blocked until this is received</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Data</span>
+              <span class="tl-badge-critical">Critical Dependency</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-date"><div class="tl-date-main">Apr 20</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Content &amp; Image Confirmation</div>
+              <div class="tl-note">Final sign-off on all creative assets required</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Creative</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item milestone">
+          <div class="tl-date"><div class="tl-date-main">Apr 24</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Complete UI/UX Presentation</div>
+              <div class="tl-note">Full UI/UX design presentation delivered to client for review</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Creative</span>
+              <span class="tl-badge-milestone">Milestone</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item milestone">
+          <div class="tl-date"><div class="tl-date-main">Apr 25–May 4</div><div class="tl-date-sub">10 days</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">UAT — User Acceptance Testing</div>
+              <div class="tl-note">Can run simultaneously with other tasks. Staging environment. Client prefers SIT / UAT approach.</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Staging</span>
+              <span class="tl-badge-milestone">Milestone</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-date"><div class="tl-date-main">Apr 28</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Migration Strategy Discussion</div>
+              <div class="tl-note">Brief sync — pending Apr 11 SQL snapshot delivery</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Migration</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-date"><div class="tl-date-main">Apr 30+</div></div>
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-card-left">
+              <div class="tl-title">Migration Task Development</div>
+              <div class="tl-note">Full development phase begins — products, customers, orders, subscription tokens</div>
+            </div>
+            <div class="tl-badges">
+              <span class="tl-cat">Execution</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div><!-- end main -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>
+    <strong>NESCAFÉ® Dolce Gusto Thailand</strong> — Platform Architecture
+  </div>
+  <div>Prepared by Ascend Commerce · Confidential</div>
+</div>
+
+<script>
+window.scrollToSection = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+const sections = {
+  'sf-grid': {
+    color: 'blue',
+    cols: 'grid-3',
+    nodes: [
+      { icon: '🛍️', title: 'Product list page', sub: 'Filter, sort, compare', tags: ['Search & filter','Sorting','Add to cart','Subscription toggle','Product comparison','Hover: packshot ↔ recipe cup'], details: ['Search and filter by category, flavour, machine type','Sorting by relevance, price, rating','Add to cart with optional subscription toggle inline','Side-by-side product comparison within category','Hover state: switch between packshot and recipe cup image','Mobile-first responsive layout'] },
+      { icon: '📋', title: 'Product detail page', sub: 'Rich assets, recommendations', tags: ['Subscription ATC','Image interval','Ingredients','You may also like','Usage recipes'], details: ['Add to cart with subscription plan selection inline','Image carousel alternating packshot and capsule / machine views','Full product description with ingredient list','Cross-sell: You may also like recommendations to increase AOV','Recipes and usage content blocks','Technical spec display'] },
+      { icon: '🛒', title: 'Cart & mini-cart', sub: 'GWP, auto-coupon, quantities', tags: ['Line item qty','Gift with purchase','Auto-best coupon','Real-time subtotal'], details: ['Change quantity per line item','Gift with Purchase (GWP) logic — auto-applied when eligible','Automatic best-benefit coupon applied for logged-in users','Real-time subtotal recalculation on every change'] },
+      { icon: '💳', title: 'Checkout flows', sub: '4 user types, subscription, LON', tags: ['Guest','Registered','Migrated user','Subscription','LON notify'], details: ['Guest checkout → onboarding redirect before completion','Registered user checkout with saved details','Migrated Magento 1 user — re-authentication required','Subscription checkout: plan selection + delivery type','Cart summary with EGG CRM widget (Phase 1: loyalty status, Phase 2: burn points)','Post-order: LON notification sent to NDG end users','Installment option via Omise mechanism'] },
+      { icon: '🏠', title: 'Homepage & CMS', sub: 'Banners, campaigns, blog', tags: ['Rotating banners','NDG cup display','Highlighted product','Brand subscription section','Blog & FAQ'], details: ['Rotated banner featuring NDG cup display','Highlighted / featured product block','Brand subscription section — hero for subscription commerce','Admin-managed campaign landing pages','Blog for SEO and customer education','FAQ section for customer self-service'] },
+      { icon: '👤', title: 'Customer account', sub: 'CRM widget, wishlist, tracking', tags: ['Point history','Tier status','Wishlist','Order tracking','PDPA rights'], details: ['EGG CRM widget: loyalty points, tier, and point history','Wishlist: save items across sessions','Real-time order tracking from Flash / Intrepid','Account deactivation and data deletion request paths (PDPA)'] },
+    ]
+  },
+  'ce-grid': {
+    color: 'teal',
+    cols: 'grid-4',
+    nodes: [
+      { icon: '📦', title: 'Product & catalogue', sub: 'Machines, capsules, accessories, GWP', tags: ['Variants','Pack-size logic','Category mgmt','OOS handling'], details: ['Coffee machines, capsules, accessories, and GWP SKUs','Product variants and pack-size configuration','Category management and merchandising logic','Out-of-stock handling synced via Intrepid in real time'] },
+      { icon: '🔄', title: 'Subscription commerce', sub: 'Core strategic feature', tags: ['Flexible plans','Pause / skip / swap','Cancel self-service','Billing recovery','Magento migration'], details: ['Configurable plans by pack size and delivery frequency (weekly / monthly)','Self-service: pause, skip, swap products, cancel — no agent needed','Migration of existing billing tokens and subscription data from Magento 1','Automated retry logic and notifications for failed payments'] },
+      { icon: '⚙️', title: 'Subscription portal', sub: 'Customer self-service', tags: ['Change plan','Change flavours','Change delivery date','Update payment'], details: ['Customer portal to change subscription plan','Swap capsule flavours within active subscription','Change delivery date or pause subscription','Update payment method (PCI DSS tokenised)'] },
+      { icon: '📊', title: 'Inventory & orders', sub: 'Real-time sync via Intrepid', tags: ['Intrepid plugin','Order routing','Tracking sync','Prevent overselling'], details: ['Automated order transmission via Intrepid Shopify plugin','Real-time stock level sync to prevent overselling','Shipment tracking numbers pushed back to Shopify','Delivery status automated sync to customer account'] },
+    ]
+  },
+  'id-grid': {
+    color: 'purple',
+    cols: 'grid-3',
+    nodes: [
+      { icon: '🔐', title: 'Authentication', sub: 'Phone OTP + LINE social login', tags: ['OTP signup','LINE login','No password migration','Age gating','PDPA consent'], details: ['Signup via phone number with OTP verification','Signup via LINE account with LINE verification','Login via phone number (OTP)','Login via LINE with CRM integration','No password migration from Magento 1 — all legacy users must re-authenticate','Age gating enforcement at signup','PDPA and marketing consent captured at registration'] },
+      { icon: '⭐', title: 'Loyalty & points', sub: 'Earn, burn, tiers', tags: ['Real-time balance','Earn on purchase','Burn at checkout','Tier status','Point history'], details: ['Real-time display of loyalty point balance and tier status','Earn points on every purchase (EGG CRM sync)','Burn (redeem) points as discounts at checkout (Phase 2)','Point history visible in account CRM widget','Tier status displayed in account dashboard'] },
+      { icon: '🎟️', title: 'Coupon management', sub: 'Real-time EGG CRM validation', tags: ['Single-use coupons','Multi-use coupons','Real-time validation','Auto-apply best benefit'], details: ['Real-time coupon validation synced from EGG CRM','Single-use and multi-use coupon support','Auto-applied best-benefit coupon in cart for eligible users','Coupon status sync prevents reuse or expired code acceptance'] },
+    ]
+  },
+  'pay-grid': {
+    color: 'amber',
+    cols: 'grid-3',
+    nodes: [
+      { icon: '💰', title: 'One-time payments', sub: 'Omise gateway', tags: ['Credit card','Bank transfer','QR PromptPay'], details: ['Credit card payments via Omise','Bank transfer support','QR PromptPay for local Thai customers'] },
+      { icon: '📅', title: 'Installment plans', sub: 'Local bank terms', tags: ['Thai bank installments','Omise mechanism','Presented at checkout'], details: ['Support for local Thai bank installment terms','Mechanism handled by Omise at checkout','Presented as option during checkout flow for eligible cart values'] },
+      { icon: '🔁', title: 'Recurring billing', sub: 'Subscription tokenisation', tags: ['PCI DSS tokenisation','Automated billing','Retry logic','No raw card storage'], details: ['PCI DSS compliant tokenisation — no raw card data stored in Shopify','Automated subscription billing on schedule','Retry logic for failed payment transactions','Customer notification on failed payment with update flow'] },
+    ]
+  },
+  'ful-grid': {
+    color: 'coral',
+    cols: 'grid-3',
+    nodes: [
+      { icon: '🚚', title: 'Flash / Intrepid plugin', sub: 'Order routing & tracking', tags: ['Auto order submission','Tracking number sync','Inventory sync','Push notifications via LINE'], details: ['Automated order submission to fulfillment partner','Receiving order status updates from Flash','Inventory tracking — stock levels synced back to Shopify','Push notifications to customers via LINE'] },
+      { icon: '🔔', title: 'LON notifications', sub: 'Post-checkout user comms', tags: ['Order confirmed','Sent to NDG users','Post-checkout trigger'], details: ['Integrated with LON to send notification to NDG end users after checkout completion','Order confirmation and status push notifications'] },
+      { icon: '🔗', title: 'EGG CRM integration', sub: 'Points, coupons, burn sync', tags: ['Loyalty sync','Earn / burn point','Coupon sync','CRM widget'], details: ['Real-time point balance and tier sync to storefront','Earn point events triggered on order completion','Burn point redemption processed at checkout','Coupon validation API calls in real time','Account dashboard CRM widget with point history'] },
+    ]
+  },
+  'mkt-grid': {
+    color: 'pink',
+    cols: 'grid-3',
+    nodes: [
+      { icon: '🔍', title: 'SEO migration', sub: '301 redirects, metafields', tags: ['Magento 1 URL mapping','301 redirects','Metafield migration','Search rank preservation'], details: ['Map all legacy Magento 1 URLs to Shopify equivalents','Implement 301 redirects to preserve search engine rankings','Migrate SEO metafields (titles, descriptions, OG tags)','Endpoint migration'] },
+      { icon: '📈', title: 'Tracking suite', sub: 'GA4, GTM, Meta, TikTok', tags: ['GA4','Google Tag Manager','Meta Pixel','TikTok Pixel'], details: ['Google Analytics 4 (GA4) implementation','Google Tag Manager (GTM) as tag container','Meta Pixel for Facebook / Instagram campaign tracking','TikTok Pixel for TikTok Ads attribution'] },
+      { icon: '✏️', title: 'CMS & content', sub: 'Banners, PDPs, blog', tags: ['Homepage banners','Campaign pages','Rich PDPs','Blog','FAQ'], details: ['Admin control over homepage banners and hero content','Campaign landing page builder','Rich Product Detail Pages: merchandising assets, recipes, specs','Blog section for SEO content strategy','FAQ section for customer self-service'] },
+    ]
+  },
+};
+
+function buildGrid(gridId, data) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+
+  grid.className = `card-grid ${data.cols}`;
+
+  data.nodes.forEach((node, i) => {
+    const card = document.createElement('div');
+    card.className = `card color-${data.color}`;
+    card.innerHTML = `
+      <div class="card-icon">${node.icon}</div>
+      <div class="card-title">${node.title}</div>
+      <div class="card-sub">${node.sub}</div>
+      <span class="card-arrow">+</span>
+    `;
+    card.addEventListener('click', () => toggleDetail(gridId, i, node, data.color));
+    grid.appendChild(card);
+  });
+
+  // Detail placeholder
+  const detail = document.createElement('div');
+  detail.className = 'detail-wrap';
+  detail.id = `${gridId}-detail`;
+  grid.after(detail);
+}
+
+let openState = {};
+
+function toggleDetail(gridId, idx, node, color) {
+  const detail = document.getElementById(`${gridId}-detail`);
+  const grid = document.getElementById(gridId);
+  const cards = grid.querySelectorAll('.card');
+  const key = `${gridId}-${idx}`;
+
+  if (openState[gridId] === idx) {
+    // Close
+    detail.classList.remove('open');
+    detail.innerHTML = '';
+    cards[idx].classList.remove('open');
+    openState[gridId] = null;
+    return;
+  }
+
+  // Close previous
+  cards.forEach(c => c.classList.remove('open'));
+  openState[gridId] = idx;
+  cards[idx].classList.add('open');
+
+  detail.innerHTML = `
+    <div class="detail-panel">
+      <button class="detail-close" onclick="closeDetail('${gridId}')">✕ Close</button>
+      <div class="detail-title">${node.title}</div>
+      <div class="tags">${node.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <ul class="detail-list">${node.details.map(d => `<li>${d}</li>`).join('')}</ul>
+    </div>
+  `;
+  detail.classList.add('open');
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+window.closeDetail = function(gridId) {
+  const detail = document.getElementById(`${gridId}-detail`);
+  const grid = document.getElementById(gridId);
+  if (detail) { detail.classList.remove('open'); detail.innerHTML = ''; }
+  if (grid) grid.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+  openState[gridId] = null;
+};
+
+Object.entries(sections).forEach(([gridId, data]) => buildGrid(gridId, data));
+
+// Nav active highlight
+const navItems = document.querySelectorAll('.nav-item');
+const sectionEls = document.querySelectorAll('section[id]');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navItems.forEach(n => n.classList.remove('active'));
+      const match = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+      if (match) match.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+
+sectionEls.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
