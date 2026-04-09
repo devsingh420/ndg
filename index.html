@@ -793,7 +793,7 @@
 
   <div class="hero-meta">
     <div class="hero-stat">
-      <span class="hero-stat-num">10</span>
+      <span class="hero-stat-num">11</span>
       <span class="hero-stat-label">System layers</span>
     </div>
     <div class="hero-divider"></div>
@@ -826,6 +826,7 @@
   <button class="nav-item" onclick="scrollToSection('compliance')">Compliance</button>
   <button class="nav-item" onclick="scrollToSection('integrations')">Integrations</button>
   <button class="nav-item" onclick="scrollToSection('dataflow')">Data flow</button>
+  <button class="nav-item" onclick="scrollToSection('migration')">Migration & Login</button>
   <button class="nav-item" onclick="scrollToSection('timeline')">Timeline</button>
 </nav>
 
@@ -1128,6 +1129,565 @@
   </section>
 
 
+  <!-- 11. MIGRATION & LOGIN -->
+  <section id="migration" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-num">11</div>
+          <h2 class="section-title">Customer Migration &amp; Login</h2>
+          <p class="section-desc">Two interconnected situations: moving customer data from Magento to Shopify, and handling three login methods with full identity resolution.</p>
+        </div>
+      </div>
+
+      <!-- SUB-SECTION A: Customer data migration -->
+      <div style="margin-bottom: 48px;">
+        <div style="font-family: var(--serif); font-size: 20px; color: var(--ink); margin-bottom: 6px;">Situation 1 — Customer data migration</div>
+        <p style="font-size: 13px; color: var(--stone-dark); margin-bottom: 24px; max-width: 560px;">Three user types live in Magento SQL. Each migrates to Shopify with a tag that tells EGG CRM how to handle the incoming webhook. Type 3 loyalty users require a match-not-duplicate merge.</p>
+
+        <div class="flow-wrap" style="padding: 28px 32px;">
+          <svg style="display:block;width:100%;min-width:640px;" viewBox="0 0 680 740" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="marr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+
+            <!-- Column headers -->
+            <text font-family="DM Serif Display, serif" font-size="13" fill="#1a1916" x="100" y="22" text-anchor="middle">Magento SQL</text>
+            <text font-family="DM Serif Display, serif" font-size="13" fill="#1a1916" x="340" y="22" text-anchor="middle">Shopify</text>
+            <text font-family="DM Serif Display, serif" font-size="13" fill="#1a1916" x="580" y="22" text-anchor="middle">EGG CRM</text>
+
+            <line x1="215" y1="30" x2="215" y2="710" stroke="#e8e5df" stroke-width="0.5" stroke-dasharray="4 4"/>
+            <line x1="460" y1="30" x2="460" y2="710" stroke="#e8e5df" stroke-width="0.5" stroke-dasharray="4 4"/>
+
+            <!-- TYPE 1 -->
+            <rect x="30" y="46" width="180" height="66" rx="8" fill="#e8f0f8" stroke="#a8c4e0" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#1a3a5c" x="120" y="66" text-anchor="middle" dominant-baseline="central">Type 1</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#2a5a8c" x="120" y="84" text-anchor="middle" dominant-baseline="central">email · name · dob</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#2a5a8c" x="120" y="100" text-anchor="middle" dominant-baseline="central">member_id · join_date</text>
+
+            <line x1="210" y1="79" x2="254" y2="79" stroke="#1a3a5c" stroke-width="1" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="232" y="72" text-anchor="middle">CSV import</text>
+
+            <rect x="256" y="46" width="200" height="80" rx="8" fill="#e8f0f8" stroke="#a8c4e0" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#1a3a5c" x="356" y="66" text-anchor="middle" dominant-baseline="central">Customer record</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#2a5a8c" x="356" y="84" text-anchor="middle" dominant-baseline="central">email · name · note: member_id</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#2a5a8c" x="356" y="100" text-anchor="middle" dominant-baseline="central">tag: member-no-purchase</text>
+
+            <rect x="262" y="116" width="126" height="16" rx="8" fill="#b5d4f4" stroke-width="0"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" font-weight="500" fill="#0c447c" x="325" y="128" text-anchor="middle" dominant-baseline="central">member-no-purchase</text>
+
+            <line x1="456" y1="86" x2="500" y2="86" stroke="#c8c4bc" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="478" y="79" text-anchor="middle">webhook fires</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="478" y="95" text-anchor="middle">no loyalty action</text>
+
+            <!-- TYPE 2 -->
+            <rect x="30" y="172" width="180" height="80" rx="8" fill="#e0f2ea" stroke="#80d4aa" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#0d5944" x="120" y="192" text-anchor="middle" dominant-baseline="central">Type 2</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#0d5944" x="120" y="210" text-anchor="middle" dominant-baseline="central">email · name · dob</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#0d5944" x="120" y="226" text-anchor="middle" dominant-baseline="central">member_id · order history</text>
+
+            <line x1="210" y1="212" x2="254" y2="212" stroke="#0d5944" stroke-width="1" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="232" y="202" text-anchor="middle">CSV + orders</text>
+
+            <rect x="256" y="172" width="200" height="94" rx="8" fill="#e0f2ea" stroke="#80d4aa" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#0d5944" x="356" y="192" text-anchor="middle" dominant-baseline="central">Customer record</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#0d5944" x="356" y="210" text-anchor="middle" dominant-baseline="central">email · name · note: member_id</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#0d5944" x="356" y="226" text-anchor="middle" dominant-baseline="central">tag: member-purchased</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#0d5944" x="356" y="242" text-anchor="middle" dominant-baseline="central">order history linked</text>
+
+            <rect x="262" y="272" width="110" height="16" rx="8" fill="#9fe1cb" stroke-width="0"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" font-weight="500" fill="#085041" x="317" y="284" text-anchor="middle" dominant-baseline="central">member-purchased</text>
+
+            <line x1="456" y1="219" x2="500" y2="219" stroke="#c8c4bc" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="478" y="212" text-anchor="middle">webhook fires</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="478" y="226" text-anchor="middle">no loyalty action</text>
+
+            <!-- TYPE 3 -->
+            <rect x="30" y="322" width="180" height="94" rx="8" fill="#fdf0d8" stroke="#e8c87a" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#7a4f00" x="120" y="342" text-anchor="middle" dominant-baseline="central">Type 3</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a4f00" x="120" y="360" text-anchor="middle" dominant-baseline="central">email · name · dob</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a4f00" x="120" y="376" text-anchor="middle" dominant-baseline="central">member_id · loyalty_id (EGG)</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a4f00" x="120" y="392" text-anchor="middle" dominant-baseline="central">order history</text>
+
+            <line x1="210" y1="369" x2="254" y2="369" stroke="#7a4f00" stroke-width="1" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="232" y="359" text-anchor="middle">CSV + orders</text>
+
+            <rect x="256" y="322" width="200" height="108" rx="8" fill="#fdf0d8" stroke="#e8c87a" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#7a4f00" x="356" y="342" text-anchor="middle" dominant-baseline="central">Customer record</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a4f00" x="356" y="360" text-anchor="middle" dominant-baseline="central">email · name · note: member_id</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a4f00" x="356" y="376" text-anchor="middle" dominant-baseline="central">tag: loyalty-egg</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a4f00" x="356" y="392" text-anchor="middle" dominant-baseline="central">order history linked</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a4f00" x="356" y="408" text-anchor="middle" dominant-baseline="central">metafield: egg_loyalty_id</text>
+
+            <rect x="262" y="436" width="76" height="16" rx="8" fill="#fac775" stroke-width="0"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" font-weight="500" fill="#633806" x="300" y="448" text-anchor="middle" dominant-baseline="central">loyalty-egg</text>
+
+            <line x1="456" y1="376" x2="502" y2="376" stroke="#7a4f00" stroke-width="1.5" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a4f00" x="479" y="368" text-anchor="middle">webhook fires</text>
+
+            <rect x="502" y="340" width="158" height="94" rx="8" fill="#fdf0d8" stroke="#e8c87a" stroke-width="1"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#7a4f00" x="581" y="360" text-anchor="middle" dominant-baseline="central">EGG CRM</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a4f00" x="581" y="378" text-anchor="middle" dominant-baseline="central">match on email</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a4f00" x="581" y="394" text-anchor="middle" dominant-baseline="central">or loyalty_id</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#a06a00" x="581" y="412" text-anchor="middle" dominant-baseline="central">merge, don't duplicate</text>
+
+            <path d="M502 418 Q478 458 460 418" fill="none" stroke="#7a4f00" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#marr)"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a4f00" x="479" y="454" text-anchor="middle">enrich back</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a4f00" x="479" y="466" text-anchor="middle">points · tier</text>
+
+            <!-- Legend -->
+            <rect x="30" y="500" width="620" height="90" rx="8" fill="#f5f3ef" stroke="#e8e5df" stroke-width="0.8"/>
+            <text font-family="DM Sans, sans-serif" font-size="10" font-weight="500" fill="#1a1916" x="50" y="522" dominant-baseline="central">Tag reference</text>
+
+            <rect x="50" y="536" width="120" height="16" rx="8" fill="#b5d4f4" stroke-width="0"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" font-weight="500" fill="#0c447c" x="110" y="548" text-anchor="middle" dominant-baseline="central">member-no-purchase</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="178" y="548" dominant-baseline="central">— profile only, no orders</text>
+
+            <rect x="50" y="562" width="100" height="16" rx="8" fill="#9fe1cb" stroke-width="0"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" font-weight="500" fill="#085041" x="100" y="574" text-anchor="middle" dominant-baseline="central">member-purchased</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="158" y="574" dominant-baseline="central">— profile + migrated order history</text>
+
+            <rect x="340" y="536" width="72" height="16" rx="8" fill="#fac775" stroke-width="0"/>
+            <text font-family="DM Sans, sans-serif" font-size="9" font-weight="500" fill="#633806" x="376" y="548" text-anchor="middle" dominant-baseline="central">loyalty-egg</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="420" y="548" dominant-baseline="central">— profile + orders + egg_loyalty_id metafield</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- SUB-SECTION B: Identity resolution -->
+      <div style="margin-bottom: 48px;">
+        <div style="font-family: var(--serif); font-size: 20px; color: var(--ink); margin-bottom: 6px;">Situation 2 — Login identity resolution</div>
+        <p style="font-size: 13px; color: var(--stone-dark); margin-bottom: 24px; max-width: 560px;">Every login attempt — email, phone OTP, or LINE — passes through the identity resolver before a session is granted. The resolver queries Shopify customers, Magento migration tags, and EGG CRM in sequence.</p>
+
+        <div class="flow-wrap" style="padding: 28px 32px;">
+          <svg style="display:block;width:100%;min-width:640px;" viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="larr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+
+            <!-- Entry -->
+            <rect x="240" y="20" width="200" height="44" rx="8" fill="#e8e5df" stroke="#c8c4bc" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="13" fill="#1a1916" x="340" y="42" text-anchor="middle" dominant-baseline="central">User arrives at Shopify</text>
+
+            <!-- Login method choice -->
+            <rect x="215" y="100" width="250" height="56" rx="8" fill="#edeafc" stroke="#c0b8ee" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="13" fill="#3a2f7a" x="340" y="118" text-anchor="middle" dominant-baseline="central">Choose login method</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#534ab7" x="340" y="138" text-anchor="middle" dominant-baseline="central">Email · Phone OTP · LINE</text>
+
+            <line x1="340" y1="64" x2="340" y2="100" stroke="#c8c4bc" stroke-width="1" marker-end="url(#larr)"/>
+
+            <!-- Three method boxes -->
+            <rect x="30" y="208" width="148" height="44" rx="8" fill="#e8f0f8" stroke="#a8c4e0" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#1a3a5c" x="104" y="230" text-anchor="middle" dominant-baseline="central">Email + password</text>
+
+            <rect x="216" y="208" width="148" height="44" rx="8" fill="#e0f2ea" stroke="#80d4aa" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#0d5944" x="290" y="230" text-anchor="middle" dominant-baseline="central">Phone OTP</text>
+
+            <rect x="402" y="208" width="148" height="44" rx="8" fill="#fdf0d8" stroke="#e8c87a" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#7a4f00" x="476" y="230" text-anchor="middle" dominant-baseline="central">LINE login</text>
+
+            <path d="M290 156 L104 208" fill="none" stroke="#c8c4bc" stroke-width="0.8" marker-end="url(#larr)"/>
+            <line x1="320" y1="156" x2="290" y2="208" fill="none" stroke="#c8c4bc" stroke-width="0.8" marker-end="url(#larr)"/>
+            <path d="M370 156 L476 208" fill="none" stroke="#c8c4bc" stroke-width="0.8" marker-end="url(#larr)"/>
+
+            <!-- Resolver -->
+            <rect x="160" y="308" width="360" height="56" rx="8" fill="#edeafc" stroke="#c0b8ee" stroke-width="1"/>
+            <text font-family="DM Serif Display, serif" font-size="13" fill="#3a2f7a" x="340" y="326" text-anchor="middle" dominant-baseline="central">Identity resolver</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#534ab7" x="340" y="346" text-anchor="middle" dominant-baseline="central">match email · phone · LINE UID · member_id · egg_loyalty_id</text>
+
+            <path d="M104 252 L104 336 L160 336" fill="none" stroke="#1a3a5c" stroke-width="0.8" marker-end="url(#larr)"/>
+            <line x1="290" y1="252" x2="290" y2="308" fill="none" stroke="#0d5944" stroke-width="0.8" marker-end="url(#larr)"/>
+            <path d="M476 252 L476 336 L520 336" fill="none" stroke="#7a4f00" stroke-width="0.8" marker-end="url(#larr)"/>
+
+            <!-- Three outcomes -->
+            <rect x="30" y="428" width="168" height="56" rx="8" fill="#e0f2ea" stroke="#80d4aa" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#0d5944" x="114" y="448" text-anchor="middle" dominant-baseline="central">Migrated user found</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#0d5944" x="114" y="466" text-anchor="middle" dominant-baseline="central">tag: migrated-magento</text>
+
+            <rect x="256" y="428" width="168" height="56" rx="8" fill="#e8f0f8" stroke="#a8c4e0" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#1a3a5c" x="340" y="448" text-anchor="middle" dominant-baseline="central">Existing Shopify user</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#1a3a5c" x="340" y="466" text-anchor="middle" dominant-baseline="central">no Magento tag</text>
+
+            <rect x="482" y="428" width="168" height="56" rx="8" fill="#e8e5df" stroke="#c8c4bc" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="12" fill="#3a3834" x="566" y="448" text-anchor="middle" dominant-baseline="central">No match found</text>
+            <text font-family="DM Sans, sans-serif" font-size="10" fill="#7a7670" x="566" y="466" text-anchor="middle" dominant-baseline="central">brand new user</text>
+
+            <path d="M240 364 L114 428" fill="none" stroke="#0d5944" stroke-width="0.8" marker-end="url(#larr)"/>
+            <line x1="340" y1="364" x2="340" y2="428" fill="none" stroke="#1a3a5c" stroke-width="0.8" marker-end="url(#larr)"/>
+            <path d="M440 364 L566 428" fill="none" stroke="#7a7670" stroke-width="0.8" marker-end="url(#larr)"/>
+
+            <!-- Action boxes -->
+            <rect x="30" y="548" width="168" height="56" rx="8" fill="#e0f2ea" stroke="#80d4aa" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="11" fill="#0d5944" x="114" y="566" text-anchor="middle" dominant-baseline="central">Welcome back flow</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#0d5944" x="114" y="582" text-anchor="middle" dominant-baseline="central">restore orders · link loyalty if Type 3</text>
+
+            <rect x="256" y="548" width="168" height="56" rx="8" fill="#e8f0f8" stroke="#a8c4e0" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="11" fill="#1a3a5c" x="340" y="566" text-anchor="middle" dominant-baseline="central">Normal session</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#1a3a5c" x="340" y="582" text-anchor="middle" dominant-baseline="central">link new method if not yet connected</text>
+
+            <rect x="482" y="548" width="168" height="56" rx="8" fill="#e8e5df" stroke="#c8c4bc" stroke-width="0.8"/>
+            <text font-family="DM Serif Display, serif" font-size="11" fill="#3a3834" x="566" y="566" text-anchor="middle" dominant-baseline="central">Create new account</text>
+            <text font-family="DM Sans, sans-serif" font-size="9" fill="#7a7670" x="566" y="582" text-anchor="middle" dominant-baseline="central">tag: new-shopify-user · EGG webhook fires</text>
+
+            <line x1="114" y1="484" x2="114" y2="548" stroke="#0d5944" stroke-width="0.8" marker-end="url(#larr)"/>
+            <line x1="340" y1="484" x2="340" y2="548" stroke="#1a3a5c" stroke-width="0.8" marker-end="url(#larr)"/>
+            <line x1="566" y1="484" x2="566" y2="548" stroke="#7a7670" stroke-width="0.8" marker-end="url(#larr)"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- SUB-SECTION C: User journey flows (executive + technical) -->
+      <div>
+        <div style="font-family: var(--serif); font-size: 20px; color: var(--ink); margin-bottom: 6px;">User journey flows</div>
+        <p style="font-size: 13px; color: var(--stone-dark); margin-bottom: 20px; max-width: 560px;">Four journeys covering all user types and login methods. Toggle between executive overview and technical detail.</p>
+
+        <!-- View toggle -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;">
+          <button onclick="setMigView('exec')" id="btn-exec" style="padding:7px 16px;border-radius:100px;border:1.5px solid var(--ndg-red);background:var(--ndg-red);color:#fff;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;">Executive view</button>
+          <button onclick="setMigView('tech')" id="btn-tech" style="padding:7px 16px;border-radius:100px;border:1.5px solid var(--stone);background:var(--white);color:var(--stone-dark);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;">Technical detail</button>
+        </div>
+
+        <!-- EXECUTIVE VIEW -->
+        <div id="mig-exec">
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;" id="exec-tabs">
+            <button class="mig-etab mig-etab-active" onclick="showExecJ('ej1',this)">Migrated user — email login</button>
+            <button class="mig-etab" onclick="showExecJ('ej2',this)">Migrated user — phone/Line</button>
+            <button class="mig-etab" onclick="showExecJ('ej3',this)">Loyalty user returns</button>
+            <button class="mig-etab" onclick="showExecJ('ej4',this)">Brand new user</button>
+          </div>
+
+          <div id="ej1" class="mig-journey mig-journey-vis">
+            <div class="mig-sublabel">SITUATION 1 — MIGRATION › SITUATION 2 — LOGIN</div>
+            <div class="mig-step-row">
+              <div class="mig-step"><div class="mig-node mig-gray"><div class="mig-nt">Was on Magento</div><div class="mig-ns">Email account, order history</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-purple"><div class="mig-nt">Pre-migration</div><div class="mig-ns">Record copied to Shopify with tag</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-blue"><div class="mig-nt">Visits new site</div><div class="mig-ns">Clicks sign in with email</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-green"><div class="mig-nt">Email matched</div><div class="mig-ns">Resolver finds migrated record</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-teal"><div class="mig-nt">Welcome back</div><div class="mig-ns">Orders visible, prompt to add phone/LINE</div></div></div>
+            </div>
+            <div class="mig-note">Smoothest path. System recognises the user instantly via email. Best moment to upsell linking phone and LINE.</div>
+          </div>
+
+          <div id="ej2" class="mig-journey">
+            <div class="mig-sublabel">SITUATION 1 — MIGRATION › SITUATION 2 — LOGIN (new method)</div>
+            <div class="mig-step-row">
+              <div class="mig-step"><div class="mig-node mig-gray"><div class="mig-nt">Was on Magento</div><div class="mig-ns">Email account only</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-purple"><div class="mig-nt">Pre-migration</div><div class="mig-ns">Copied to Shopify, no phone stored</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-amber"><div class="mig-nt">Visits new site</div><div class="mig-ns">Tries phone OTP or LINE login</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-red"><div class="mig-nt">No match found</div><div class="mig-ns">Phone/LINE not in migrated data</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-coral"><div class="mig-nt">Account link UI</div><div class="mig-ns">"Shopped before? Enter your email"</div></div></div>
+            </div>
+            <div class="mig-note mig-note-warn">Critical path. The account link UI is essential — without it, every phone/LINE-first login creates a duplicate. This screen must not be skippable silently.</div>
+          </div>
+
+          <div id="ej3" class="mig-journey">
+            <div class="mig-sublabel">SITUATION 1 — MIGRATION (TYPE 3) › SITUATION 2 — ANY LOGIN METHOD</div>
+            <div class="mig-step-row">
+              <div class="mig-step"><div class="mig-node mig-amber"><div class="mig-nt">Loyalty member</div><div class="mig-ns">Exists in Magento + EGG CRM</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-purple"><div class="mig-nt">Pre-migration</div><div class="mig-ns">Shopify record + loyalty_id metafield</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-amber"><div class="mig-nt">Login any method</div><div class="mig-ns">Email, phone, or LINE</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-green"><div class="mig-nt">Resolver matches</div><div class="mig-ns">EGG CRM linked via loyalty_id</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-teal"><div class="mig-nt">Full experience</div><div class="mig-ns">Points, tier, orders all visible</div></div></div>
+            </div>
+            <div class="mig-note mig-note-good">Best outcome. LINE login is the fastest path for loyalty users — if their LINE account is in EGG CRM, the match is instant with no email needed.</div>
+          </div>
+
+          <div id="ej4" class="mig-journey">
+            <div class="mig-sublabel">SITUATION 2 ONLY — NEW USER, NO MAGENTO HISTORY</div>
+            <div class="mig-step-row">
+              <div class="mig-step"><div class="mig-node mig-gray"><div class="mig-nt">No prior history</div><div class="mig-ns">Never on Magento or EGG CRM</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-blue"><div class="mig-nt">Registers on Shopify</div><div class="mig-ns">Email, phone OTP, or LINE</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-red"><div class="mig-nt">No match found</div><div class="mig-ns">Resolver confirms new user</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-purple"><div class="mig-nt">Account created</div><div class="mig-ns">tag: new-shopify-user</div></div></div>
+              <div class="mig-arr">›</div>
+              <div class="mig-step"><div class="mig-node mig-teal"><div class="mig-nt">EGG CRM notified</div><div class="mig-ns">Webhook fires, profile created</div></div></div>
+            </div>
+            <div class="mig-note">Prompt to add a second login method post-registration — this future-proofs the account if the user later wants to switch methods.</div>
+          </div>
+
+          <!-- Legend -->
+          <div class="mig-legend">
+            <div class="mig-legend-item"><div class="mig-ldot" style="background:#edeafc;border:1px solid #c0b8ee;"></div> System action (automatic)</div>
+            <div class="mig-legend-item"><div class="mig-ldot" style="background:#e8f0f8;border:1px solid #a8c4e0;"></div> User action</div>
+            <div class="mig-legend-item"><div class="mig-ldot" style="background:#e0f2ea;border:1px solid #80d4aa;"></div> Successful match</div>
+            <div class="mig-legend-item"><div class="mig-ldot" style="background:#fff0f0;border:1px solid #f0a0a0;"></div> No match / risk point</div>
+            <div class="mig-legend-item"><div class="mig-ldot" style="background:#e0f2ea;border:1px solid #80d4aa;"></div> Happy end state</div>
+          </div>
+        </div>
+
+        <!-- TECHNICAL VIEW -->
+        <div id="mig-tech" style="display:none;">
+          <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+            <button class="mig-etab mig-etab-active" onclick="showTechJ('tj1',this)">Migrated user — email login</button>
+            <button class="mig-etab" onclick="showTechJ('tj2',this)">Migrated user — phone/Line</button>
+            <button class="mig-etab" onclick="showTechJ('tj3',this)">Loyalty user returns</button>
+            <button class="mig-etab" onclick="showTechJ('tj4',this)">Brand new user</button>
+          </div>
+
+          <div id="tj1" class="mig-journey mig-journey-vis">
+            <div class="mig-tech-grid">
+              <div></div>
+              <div class="mig-th mig-th-user">User / Browser</div>
+              <div class="mig-th mig-th-shopify">Shopify</div>
+              <div class="mig-th mig-th-resolver">Identity resolver</div>
+              <div class="mig-th mig-th-egg">EGG CRM</div>
+
+              <div class="mig-tl">Pre-go-live</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Batch import</strong><br><small>CSV from Magento SQL</small><span class="mig-badge-tag">member-purchased</span></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 1</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Goes to new site</strong><br><small>Clicks email login</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Login form served</strong><br><small>Shopify Customer Accounts</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 2</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Submits email + password</strong></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Auth attempt</strong><br><small>POST /account/login</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Lookup: email</strong><br><small>Query customer by email</small><span class="mig-badge-api">GET /customers/search</span></div></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 3</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-decision"><strong>Decision</strong><br><small>tag: member-purchased found?</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 4</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Set first_login_method</strong><br><small>Write metafield: "email"</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Write: magento_migrated=true</strong><br><small>Update customer metafields</small></div></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 5</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Logged in</strong><br><small>Order history visible</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Webhook fired</strong><br><small>customer/login → EGG CRM</small><span class="mig-badge-api">POST webhook</span></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Receive event</strong><br><small>tag: member-purchased — no loyalty action</small></div></div>
+
+              <div class="mig-tl">Step 6</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Prompted: add phone or LINE</strong><br><small>Optional, dismissable</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Link method UI</strong><br><small>Saves phone/LINE UID to metafields</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-success"><strong>linked_methods written</strong><br><small>linked_methods: [email, phone]</small></div></div>
+              <div class="mig-tc"></div>
+            </div>
+          </div>
+
+          <div id="tj2" class="mig-journey">
+            <div class="mig-tech-grid">
+              <div></div>
+              <div class="mig-th mig-th-user">User / Browser</div>
+              <div class="mig-th mig-th-shopify">Shopify</div>
+              <div class="mig-th mig-th-resolver">Identity resolver</div>
+              <div class="mig-th mig-th-egg">EGG CRM</div>
+
+              <div class="mig-tl">Step 1</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Chooses phone OTP or LINE</strong><br><small>No email entered</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>OTP sent / LINE OAuth</strong><br><small>Phone verified or LINE UID received</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 2</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Lookup: phone / LINE UID</strong><br><small>Search Shopify customers + EGG CRM</small><span class="mig-badge-api">GET /customers/search</span></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Check: phone in EGG CRM?</strong><br><small>Also checks loyalty_id</small></div></div>
+
+              <div class="mig-tl">Step 3</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-decision"><strong>Decision</strong><br><small>Any match found?</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 4 — no match</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Account link screen</strong><br><small>"Shopped before? Enter email"</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Hold session, show link UI</strong><br><small>Do NOT create new account yet</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-fail"><strong>No auto-create</strong><br><small>Await email confirmation</small></div></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 5a — confirmed</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Enters old email</strong></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Email lookup + OTP verify</strong><br><small>Confirm ownership of old account</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Merge: write phone/LINE UID</strong><br><small>Add to existing customer metafields</small><span class="mig-badge-api">PUT /customers/{id}</span></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-success"><strong>linked_methods updated</strong><br><small>Old orders now accessible</small></div></div>
+
+              <div class="mig-tl">Step 5b — skipped</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Dismisses link screen</strong></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>New account created</strong><br><small>tag: new-shopify-user</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-fail"><strong>Duplicate risk flagged</strong><br><small>Queue for manual review if email added later matches existing</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Webhook fires</strong><br><small>New profile in EGG CRM</small></div></div>
+            </div>
+          </div>
+
+          <div id="tj3" class="mig-journey">
+            <div class="mig-tech-grid">
+              <div></div>
+              <div class="mig-th mig-th-user">User / Browser</div>
+              <div class="mig-th mig-th-shopify">Shopify</div>
+              <div class="mig-th mig-th-resolver">Identity resolver</div>
+              <div class="mig-th mig-th-egg">EGG CRM</div>
+
+              <div class="mig-tl">Pre-go-live</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Migrated with loyalty_id</strong><br><small>Metafield: egg_loyalty_id stored</small><span class="mig-badge-tag">loyalty-egg</span></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Existing loyalty record</strong><br><small>Points, tier, history intact</small></div></div>
+
+              <div class="mig-tl">Step 1</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Logs in (any method)</strong><br><small>Email, phone, or LINE</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Auth processed</strong></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Multi-field lookup</strong><br><small>email OR phone OR LINE UID</small><span class="mig-badge-api">GET /customers/search</span></div></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 2</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-decision"><strong>Decision</strong><br><small>egg_loyalty_id metafield present?</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 3</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Webhook to EGG CRM</strong><br><small>customer/login + loyalty_id</small><span class="mig-badge-api">POST webhook</span></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Match on loyalty_id</strong><br><small>Link Shopify customer_id to existing loyalty record</small><span class="mig-badge-api">PUT /members/{id}</span></div></div>
+
+              <div class="mig-tl">Step 4</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>EGG enriches back</strong><br><small>Points + tier written to metafields</small><span class="mig-badge-api">PUT /customers/{id}</span></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Enrich: points, tier</strong><br><small>Pushed back to Shopify</small></div></div>
+
+              <div class="mig-tl">Step 5</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-success"><strong>Full loyalty dashboard</strong><br><small>Points, tier, order history all visible</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+            </div>
+          </div>
+
+          <div id="tj4" class="mig-journey">
+            <div class="mig-tech-grid">
+              <div></div>
+              <div class="mig-th mig-th-user">User / Browser</div>
+              <div class="mig-th mig-th-shopify">Shopify</div>
+              <div class="mig-th mig-th-resolver">Identity resolver</div>
+              <div class="mig-th mig-th-egg">EGG CRM</div>
+
+              <div class="mig-tl">Step 1</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Registers via any method</strong><br><small>Email, phone OTP, or LINE OAuth</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Registration flow</strong><br><small>Verify identity via chosen method</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 2</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Full lookup</strong><br><small>email + phone + LINE UID — check Shopify + EGG CRM</small><span class="mig-badge-api">GET /customers/search</span></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>Check EGG CRM for any match</strong></div></div>
+
+              <div class="mig-tl">Step 3</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-decision"><strong>Decision</strong><br><small>Any match in either system?</small></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 4 — no match</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Create customer record</strong><br><small>Write: first_login_method, tag: new-shopify-user</small><span class="mig-badge-api">POST /customers</span></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-resolver"><strong>Set metafields</strong><br><small>first_login_method · linked_methods[]</small></div></div>
+              <div class="mig-tc"></div>
+
+              <div class="mig-tl">Step 5</div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Webhook fires</strong><br><small>customer/create → EGG CRM</small><span class="mig-badge-api">POST webhook</span></div></div>
+              <div class="mig-tc"></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-egg"><strong>New profile in EGG CRM</strong><br><small>Loyalty enrolment eligibility checked</small></div></div>
+
+              <div class="mig-tl">Step 6</div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-user"><strong>Prompted: link second method</strong><br><small>Add email / phone / LINE</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-shopify"><strong>Optional method linking</strong><br><small>Updates linked_methods[]</small></div></div>
+              <div class="mig-tc"><div class="mig-tb mig-tb-success"><strong>Account hardened</strong><br><small>Future logins via any linked method resolve instantly</small></div></div>
+              <div class="mig-tc"></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end sub-section C -->
+    </div>
+  </section>
+
+  <!-- ── MIGRATION & LOGIN STYLES ────────────────────── -->
+  <style>
+    .mig-etab { padding:6px 14px;border-radius:100px;border:1px solid var(--stone);background:var(--white);color:var(--stone-dark);font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s; }
+    .mig-etab-active { border-color:var(--ndg-red);background:var(--ndg-red);color:#fff; }
+    .mig-journey { display:none; }
+    .mig-journey-vis { display:block; }
+    .mig-sublabel { font-size:10px;color:var(--stone-dark);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;font-family:var(--sans); }
+    .mig-step-row { display:flex;align-items:flex-start;gap:0;margin-bottom:12px;flex-wrap:wrap; }
+    .mig-step { flex:1;display:flex;flex-direction:column;align-items:center;min-width:100px; }
+    .mig-node { width:100%;max-width:130px;min-height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;text-align:center; }
+    .mig-nt { font-size:11px;font-weight:500;line-height:1.3;font-family:var(--sans); }
+    .mig-ns { font-size:10px;line-height:1.3;margin-top:3px;opacity:.85;font-family:var(--sans); }
+    .mig-arr { display:flex;align-items:center;justify-content:center;padding:0 2px;margin-top:16px;color:var(--stone-mid);font-size:16px;flex-shrink:0; }
+    .mig-note { padding:10px 14px;border-radius:8px;background:var(--warm-white);font-size:11px;color:var(--stone-dark);border:1px solid var(--stone);margin-top:4px;font-family:var(--sans); }
+    .mig-note-warn { background:#fff8f5;border-color:rgba(200,16,46,0.2);color:#8a2a10; }
+    .mig-note-good { background:#f0faf5;border-color:#80d4aa;color:#0d5944; }
+    .mig-gray   { background:var(--warm-white);border:1px solid var(--stone);color:var(--ink); }
+    .mig-purple { background:#edeafc;border:1px solid #c0b8ee;color:#3a2f7a; }
+    .mig-blue   { background:#e8f0f8;border:1px solid #a8c4e0;color:#1a3a5c; }
+    .mig-teal   { background:#e0f2ea;border:1px solid #80d4aa;color:#0d5944; }
+    .mig-green  { background:#eaf3de;border:1px solid #97c459;color:#27500a; }
+    .mig-amber  { background:#fdf0d8;border:1px solid #e8c87a;color:#7a4f00; }
+    .mig-red    { background:#fff0f0;border:1px solid #f0a0a0;color:#8a2020; }
+    .mig-coral  { background:#faeae5;border:1px solid #e0a898;color:#8a2a10; }
+    .mig-legend { display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;padding-top:12px;border-top:1px solid var(--stone); }
+    .mig-legend-item { display:flex;align-items:center;gap:6px;font-size:11px;color:var(--stone-dark);font-family:var(--sans); }
+    .mig-ldot { width:10px;height:10px;border-radius:3px;flex-shrink:0; }
+
+    .mig-tech-grid { display:grid;grid-template-columns:90px 1fr 1fr 1fr 1fr;gap:4px;overflow-x:auto; }
+    .mig-th { font-size:10px;font-weight:500;text-align:center;padding:6px 4px;border-radius:6px 6px 0 0;letter-spacing:.04em;font-family:var(--sans); }
+    .mig-th-user    { background:#e8f0f8;color:#1a3a5c; }
+    .mig-th-shopify { background:#edeafc;color:#3a2f7a; }
+    .mig-th-resolver{ background:#fdf0d8;color:#7a4f00; }
+    .mig-th-egg     { background:#e0f2ea;color:#0d5944; }
+    .mig-tl { font-size:10px;color:var(--stone-dark);padding:8px 4px 0 0;text-align:right;line-height:1.3;font-family:var(--sans); }
+    .mig-tc { padding:3px; }
+    .mig-tb { border-radius:7px;padding:7px 8px;font-size:11px;line-height:1.35;min-height:36px;font-family:var(--sans); }
+    .mig-tb strong { font-weight:500;display:block;margin-bottom:2px; }
+    .mig-tb small { font-size:10px;opacity:.8; }
+    .mig-tb-user     { background:#e8f0f8;border:1px solid #a8c4e0;color:#1a3a5c; }
+    .mig-tb-shopify  { background:#edeafc;border:1px solid #c0b8ee;color:#3a2f7a; }
+    .mig-tb-resolver { background:#fdf0d8;border:1px solid #e8c87a;color:#7a4f00; }
+    .mig-tb-egg      { background:#e0f2ea;border:1px solid #80d4aa;color:#0d5944; }
+    .mig-tb-decision { background:#faeae5;border:1.5px dashed #c8102e;color:#8a2a10; }
+    .mig-tb-success  { background:#eaf3de;border:1px solid #97c459;color:#27500a; }
+    .mig-tb-fail     { background:#fff0f0;border:1px solid #f0a0a0;color:#8a2020; }
+    .mig-badge-api { display:inline-block;background:#1a1916;color:#9fe1cb;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:500;margin-top:4px;letter-spacing:.03em;font-family:var(--sans); }
+    .mig-badge-tag { display:inline-block;background:#edeafc;color:#3a2f7a;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:500;margin-top:4px;font-family:var(--sans); }
+  </style>
+
   <!-- TIMELINE -->
   <section id="timeline" class="section">
     <div class="container">
@@ -1421,6 +1981,39 @@ window.closeDetail = function(gridId) {
 };
 
 Object.entries(sections).forEach(([gridId, data]) => buildGrid(gridId, data));
+
+// Migration & Login section interactivity
+window.setMigView = function(view) {
+  const execEl = document.getElementById('mig-exec');
+  const techEl = document.getElementById('mig-tech');
+  const btnExec = document.getElementById('btn-exec');
+  const btnTech = document.getElementById('btn-tech');
+  if (view === 'exec') {
+    execEl.style.display = 'block';
+    techEl.style.display = 'none';
+    btnExec.style.background = 'var(--ndg-red)'; btnExec.style.color = '#fff'; btnExec.style.borderColor = 'var(--ndg-red)';
+    btnTech.style.background = 'var(--white)'; btnTech.style.color = 'var(--stone-dark)'; btnTech.style.borderColor = 'var(--stone)';
+  } else {
+    execEl.style.display = 'none';
+    techEl.style.display = 'block';
+    btnTech.style.background = 'var(--ndg-red)'; btnTech.style.color = '#fff'; btnTech.style.borderColor = 'var(--ndg-red)';
+    btnExec.style.background = 'var(--white)'; btnExec.style.color = 'var(--stone-dark)'; btnExec.style.borderColor = 'var(--stone)';
+  }
+};
+
+window.showExecJ = function(id, tab) {
+  document.querySelectorAll('#mig-exec .mig-journey').forEach(j => j.classList.remove('mig-journey-vis'));
+  tab.closest('div').querySelectorAll('.mig-etab').forEach(t => t.classList.remove('mig-etab-active'));
+  document.getElementById(id).classList.add('mig-journey-vis');
+  tab.classList.add('mig-etab-active');
+};
+
+window.showTechJ = function(id, tab) {
+  document.querySelectorAll('#mig-tech .mig-journey').forEach(j => j.classList.remove('mig-journey-vis'));
+  tab.closest('div').querySelectorAll('.mig-etab').forEach(t => t.classList.remove('mig-etab-active'));
+  document.getElementById(id).classList.add('mig-journey-vis');
+  tab.classList.add('mig-etab-active');
+};
 
 // Nav active highlight
 const navItems = document.querySelectorAll('.nav-item');
